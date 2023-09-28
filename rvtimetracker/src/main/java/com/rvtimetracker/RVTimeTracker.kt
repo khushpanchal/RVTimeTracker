@@ -2,9 +2,11 @@ package com.rvtimetracker
 
 import android.graphics.Rect
 import android.view.View
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rvtimetracker.observers.TrackerAdapterDataObserver
+import com.rvtimetracker.observers.TrackerObserver
 
 class RVTimeTracker private constructor(
     private val recyclerView: RecyclerView
@@ -44,6 +46,7 @@ class RVTimeTracker private constructor(
     }
 
     private fun registerObservers() {
+        (recyclerView.context as LifecycleOwner).lifecycle.addObserver(TrackerObserver(this))
         recyclerView.adapter?.registerAdapterDataObserver(TrackerAdapterDataObserver(this))
     }
 
@@ -94,6 +97,14 @@ class RVTimeTracker private constructor(
     }
 
     fun listUpdated() {
+        trackOnGlobalLayout = false
+    }
+
+    fun trackOnStop() {
+        currentListMap.forEach {
+            //Track Item here
+        }
+        currentListMap.clear()
         trackOnGlobalLayout = false
     }
 
