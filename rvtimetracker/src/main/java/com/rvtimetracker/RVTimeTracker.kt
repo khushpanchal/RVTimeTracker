@@ -9,15 +9,18 @@ import com.rvtimetracker.observers.TrackerAdapterDataObserver
 import com.rvtimetracker.observers.TrackerObserver
 
 class RVTimeTracker private constructor(
-    private val recyclerView: RecyclerView
+    private val recyclerView: RecyclerView,
+    private val trackItem: ((TrackInfo) -> Unit)?
 ) {
     companion object {
 
         fun init(
-            recyclerView: RecyclerView
+            recyclerView: RecyclerView,
+            trackItem: ((TrackInfo) -> Unit)? = null
         ) {
             RVTimeTracker(
-                recyclerView
+                recyclerView,
+                trackItem
             )
         }
     }
@@ -40,7 +43,15 @@ class RVTimeTracker private constructor(
         recyclerView.viewTreeObserver.addOnGlobalLayoutListener {
             if (!trackOnGlobalLayout) {
                 trackOnGlobalLayout = true
-                addNewListAndTrack()
+                if(!recyclerView.isAnimating) {
+                    addNewListAndTrack()
+                } else {
+                    recyclerView.itemAnimator?.isRunning {
+                        if(!recyclerView.isAnimating) {
+                            addNewListAndTrack()
+                        }
+                    }
+                }
             }
         }
     }
@@ -76,7 +87,7 @@ class RVTimeTracker private constructor(
     ) {
         currentMap.forEach {
             if (!newMap.containsKey(it.key)) {
-                //Track Item here
+                trackItemAndAddToList(it)
                 currentListMap.remove(it.key)
             }
         }
@@ -102,10 +113,19 @@ class RVTimeTracker private constructor(
 
     fun trackOnStop() {
         currentListMap.forEach {
-            //Track Item here
+            trackItemAndAddToList(it)
         }
         currentListMap.clear()
         trackOnGlobalLayout = false
+    }
+
+    private fun trackItemAndAddToList(itemMap: Map.Entry<String, TrackData>) {
+        val trackInfo = TrackInfo(
+            itemMap.key,
+            itemMap.value.position,
+            System.currentTimeMillis() - itemMap.value.startTime
+        )
+        trackItem?.invoke(trackInfo)
     }
 
 }
