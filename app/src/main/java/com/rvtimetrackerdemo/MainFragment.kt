@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rvtimetracker.RVTimeTracker
 import com.rvtimetrackerdemo.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -74,6 +75,8 @@ class MainFragment : Fragment() {
         adapter.setOnRvItemClickListener { _, _ ->
 
         }
+
+        RVTimeTracker.init(binding.recyclerView)
 
     }
 }
