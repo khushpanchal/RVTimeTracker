@@ -77,7 +77,11 @@ class MainFragment : Fragment() {
 
         }
 
-        RVTimeTracker.init(binding.recyclerView) {trackInfo ->
+        RVTimeTracker.init(
+            recyclerView = binding.recyclerView,
+            minTimeInMs = 1000,
+            minHeightInRatio = 0.45
+        ) {trackInfo ->
             Log.i("TrackData", trackInfo.toString())
         }
 

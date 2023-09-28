@@ -10,16 +10,25 @@ import com.rvtimetracker.observers.TrackerObserver
 
 class RVTimeTracker private constructor(
     private val recyclerView: RecyclerView,
+    private val minTimeInMs: Long,
+    private val minHeightInRatio: Double,
     private val trackItem: ((TrackInfo) -> Unit)?
 ) {
     companion object {
 
         fun init(
             recyclerView: RecyclerView,
+            minTimeInMs: Long = 0L,
+            minHeightInRatio: Double = 0.5,
             trackItem: ((TrackInfo) -> Unit)? = null
         ) {
+            if (minTimeInMs < 0 || minHeightInRatio < 0 || minHeightInRatio > 1) {
+                throw IllegalArgumentException("minTimeInMs/minHeightInRatio value should be within limit")
+            }
             RVTimeTracker(
                 recyclerView,
+                minTimeInMs,
+                minHeightInRatio,
                 trackItem
             )
         }
@@ -70,7 +79,7 @@ class RVTimeTracker private constructor(
         for (viewPosition in firstVisibleItemPosition..lastVisibleItemPosition) {
             if (viewPosition < 0) continue
             val itemView = recyclerView.layoutManager?.findViewByPosition(viewPosition)
-            if (itemView != null && getVisibleHeightPercentage(itemView) >= 0.5) {
+            if (itemView != null && getVisibleHeightPercentage(itemView) >= minHeightInRatio) {
                 if (itemView.tag?.toString() == null || itemView.tag?.toString()!!.isEmpty()) {
                     throw IllegalArgumentException("view tag is necessary")
                 }
@@ -125,7 +134,9 @@ class RVTimeTracker private constructor(
             itemMap.value.position,
             System.currentTimeMillis() - itemMap.value.startTime
         )
-        trackItem?.invoke(trackInfo)
+        if (trackInfo.viewDuration >= minTimeInMs) {
+            trackItem?.invoke(trackInfo)
+        }
     }
 
 }
