@@ -12,7 +12,9 @@ class RVTimeTracker private constructor(
     private val recyclerView: RecyclerView,
     private val minTimeInMs: Long,
     private val minHeightInRatio: Double,
-    private val trackItem: ((TrackInfo) -> Unit)?
+    private val dataLimit: Int,
+    private val trackItem: ((TrackInfo) -> Unit)?,
+    private val trackAll: ((List<TrackInfo>) -> Unit)?
 ) {
     companion object {
 
@@ -20,22 +22,27 @@ class RVTimeTracker private constructor(
             recyclerView: RecyclerView,
             minTimeInMs: Long = 0L,
             minHeightInRatio: Double = 0.5,
-            trackItem: ((TrackInfo) -> Unit)? = null
+            dataLimit: Int = 10,
+            trackItem: ((TrackInfo) -> Unit)? = null,
+            trackAll: ((List<TrackInfo>) -> Unit)? = null
         ) {
-            if (minTimeInMs < 0 || minHeightInRatio < 0 || minHeightInRatio > 1) {
-                throw IllegalArgumentException("minTimeInMs/minHeightInRatio value should be within limit")
+            if (dataLimit > 50 || minTimeInMs < 0 || minHeightInRatio < 0 || minHeightInRatio > 1) {
+                throw IllegalArgumentException("dataLimit/minTimeInMs/minHeightInRatio value should be within limit")
             }
             RVTimeTracker(
                 recyclerView,
                 minTimeInMs,
                 minHeightInRatio,
-                trackItem
+                dataLimit,
+                trackItem,
+                trackAll
             )
         }
     }
 
     private val currentListMap = mutableMapOf<String, TrackData>()
     private val newListMap = mutableMapOf<String, TrackData>()
+    private val trackInfoMap = mutableMapOf<String, TrackInfo>()
     private var trackOnGlobalLayout = false
 
     init {
@@ -116,15 +123,34 @@ class RVTimeTracker private constructor(
         return visibleHeight / height
     }
 
-    fun listUpdated() {
+    private fun addItemToTrackInfoList(trackInfo: TrackInfo) {
+        val timeInMs: Long = trackInfoMap[trackInfo.viewTag]?.viewDuration ?: 0L
+        trackInfoMap[trackInfo.viewTag] = TrackInfo(
+            trackInfo.viewTag,
+            trackInfo.itemPosition,
+            trackInfo.viewDuration + timeInMs
+        )
+        if (trackInfoMap.size >= dataLimit) {
+            trackAllAndClear()
+        }
+    }
+
+    private fun trackAllAndClear() {
+        if (trackInfoMap.isEmpty()) return
+        trackAll?.invoke(trackInfoMap.values.toList())
+        trackInfoMap.clear()
+    }
+
+    internal fun listUpdated() {
         trackOnGlobalLayout = false
     }
 
-    fun trackOnStop() {
+    internal fun trackOnStop() {
         currentListMap.forEach {
             trackItemAndAddToList(it)
         }
         currentListMap.clear()
+        trackAllAndClear()
         trackOnGlobalLayout = false
     }
 
@@ -136,6 +162,7 @@ class RVTimeTracker private constructor(
         )
         if (trackInfo.viewDuration >= minTimeInMs) {
             trackItem?.invoke(trackInfo)
+            addItemToTrackInfoList(trackInfo)
         }
     }
 

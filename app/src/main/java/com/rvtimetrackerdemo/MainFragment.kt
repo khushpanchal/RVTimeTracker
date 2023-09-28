@@ -80,10 +80,16 @@ class MainFragment : Fragment() {
         RVTimeTracker.init(
             recyclerView = binding.recyclerView,
             minTimeInMs = 1000,
-            minHeightInRatio = 0.45
-        ) {trackInfo ->
-            Log.i("TrackData", trackInfo.toString())
-        }
-
+            minHeightInRatio = 0.45,
+            dataLimit = 8,
+            trackItem = { trackInfo ->
+                Log.i("TrackData", trackInfo.toString())
+            },
+            trackAll = { trackInfoList ->
+                for (item in trackInfoList) {
+                    Log.i("TrackDataAll", item.toString())
+                }
+            }
+        )
     }
 }
