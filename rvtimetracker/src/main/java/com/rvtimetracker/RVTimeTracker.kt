@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rvtimetracker.observers.TrackerAdapterDataObserver
 
 class RVTimeTracker private constructor(
     private val recyclerView: RecyclerView
@@ -25,6 +26,8 @@ class RVTimeTracker private constructor(
 
     init {
 
+        registerObservers()
+
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -38,6 +41,10 @@ class RVTimeTracker private constructor(
                 addNewListAndTrack()
             }
         }
+    }
+
+    private fun registerObservers() {
+        recyclerView.adapter?.registerAdapterDataObserver(TrackerAdapterDataObserver(this))
     }
 
     private fun addNewListAndTrack() {
@@ -86,6 +93,9 @@ class RVTimeTracker private constructor(
         return visibleHeight / height
     }
 
+    fun listUpdated() {
+        trackOnGlobalLayout = false
+    }
 
 }
 
