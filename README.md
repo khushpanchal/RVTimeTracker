@@ -1,5 +1,5 @@
 
-<img src=https://github.com/khushpanchal/RecyclerViewTracking/blob/main/assets/RVTimeTracker.jpg >
+<img src=https://github.com/khushpanchal/RVTimeTracker/blob/master/assets/RVTimeTracker.jpg >
 
 # RVTimeTracker -  RecyclerView Time Tracker
 
@@ -81,7 +81,7 @@ override fun onBindViewHolder(holder: YourViewHolder, position: Int) {
 
 ## Sample Logs
 
-<img src=https://github.com/khushpanchal/RecyclerViewTracking/blob/main/assets/RVTimeTracker_Visual.jpg >
+<img src=https://github.com/khushpanchal/RVTimeTracker/blob/master/assets/RVTimeTracker_Visual.jpg >
 
 Check out these sample logs to see the kind of insights you can gain with RVTimeTracker (RecyclerView Time Tracker):
 
