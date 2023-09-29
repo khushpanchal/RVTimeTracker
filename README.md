@@ -9,11 +9,25 @@ RVTimeTracker (RecyclerView Time Tracker) is an Android library designed to prec
 
 To integrate RecyclerView Time Tracker library into your Android project, follow these simple steps:
 
-1. Open your `build.gradle` (Module: app) file.
-2. Add the following dependency in the `dependencies` section:
-
+1. Update your settings.gradle file with the following dependency.
+   
 ```Groovy
-implementation 'com.example.rvtimetracker:rvtimetracker:1.0.0'
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // this one
+    }
+}
+```
+
+2. Update your module level build.gradle file with the following dependency.
+   
+```Groovy
+dependencies {
+        implementation 'com.github.khushpanchal:RVTimeTracker:1.0.0'
+}
 ```
 
 ## Usage
