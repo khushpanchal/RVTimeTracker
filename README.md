@@ -105,6 +105,10 @@ TrackInfo(viewTag=e9c758ff-4eae-423a-afa0-3dd7b18e4e2a, itemPosition=1, viewDura
 TrackInfo(viewTag=571a4cb8-0b54-4f5a-bfd1-f98444c97049, itemPosition=2, viewDuration=55322)
 ```
 
+## Blog
+
+Check out the blog: https://medium.com/@khush.panchal123/introducing-rvtimetracker-recyclerview-time-tracker-ad9cae2940f9
+
 ## Contribution
 
 Enhance your app's user experience and gain insights into user interactions with RVTimeTracker.
