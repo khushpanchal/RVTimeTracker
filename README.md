@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/khushpanchal/RVTimeTracker.svg)](https://jitpack.io/#khushpanchal/RVTimeTracker)
 
 <img src=https://github.com/khushpanchal/RVTimeTracker/blob/master/assets/RVTimeTracker.jpg >
 
@@ -13,7 +14,7 @@ To integrate RecyclerView Time Tracker library into your Android project, follow
 2. Add the following dependency in the `dependencies` section:
 
 ```Groovy
-implementation 'com.example.rvtimetracker:rvtimetracker:1.0.0'
+implementation 'com.example.rvtimetracker:rvtimetracker:1.0.1'
 ```
 
 ## Usage
@@ -28,6 +29,7 @@ RVTimeTracker.init(
     recyclerView = binding.recyclerView, // The RecyclerView to be tracked for item view times.
     minTimeInMs = 1000, // (optional, default = 0): Minimum time in milliseconds a view needs to be visible to be tracked. Value should be greater than 0
     minHeightInRatio = 0.45, // (optional, default = 0.5): Minimum height ratio a view should have to be tracked. Value should be between 0 and 1
+    minWidthInRatio = 0.45, // (optional, default = 0.5): Minimum width ratio a view should have to be tracked. Value should be between 0 and 1
     dataLimit = 8, // (optional, default = 10): Number of data after which "trackAll" lambda block will be invoked with the list of tracked data.
     trackItem = { trackInfo -> // Lambda function to be executed when any item moves out of the visible screen. (Contain TrackInfo)
         Log.i("TrackData", trackInfo.toString())
