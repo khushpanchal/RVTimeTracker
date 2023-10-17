@@ -81,6 +81,7 @@ class MainFragment : Fragment() {
             recyclerView = binding.recyclerView,
             minTimeInMs = 1000,
             minHeightInRatio = 0.45,
+            minWidthInRatio = 0.45,
             dataLimit = 8,
             trackItem = { trackInfo ->
                 Log.i("TrackData", trackInfo.toString())

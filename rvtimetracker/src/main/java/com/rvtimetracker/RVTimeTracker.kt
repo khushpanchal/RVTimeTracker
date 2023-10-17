@@ -21,6 +21,7 @@ import com.rvtimetracker.observers.TrackerObserver
  *     recyclerView = binding.recyclerView,
  *     minTimeInMs = 1000,
  *     minHeightInRatio = 0.45,
+ *     minWidthInRatio = 0.45,
  *     dataLimit = 8,
  *     trackItem = { trackInfo ->
  *         Log.i("TrackData", trackInfo.toString())
@@ -61,6 +62,7 @@ import com.rvtimetracker.observers.TrackerObserver
  * @param recyclerView The RecyclerView to be tracked for item view times.
  * @param minTimeInMs (optional, default = 0): Minimum time in milliseconds a view needs to be visible to be tracked. Value should be greater than 0
  * @param minHeightInRatio (optional, default = 0.5): Minimum height ratio a view should have to be tracked. Value should be between 0 and 1
+ * @param minWidthInRatio (optional, default = 0.5): Minimum width ratio a view should have to be tracked. Value should be between 0 and 1
  * @param dataLimit (optional, default = 10): Number of data after which "trackAll" lambda block will be invoked with the list of tracked data. Value should be less than or equal to 50
  * @param trackItem Lambda function to be executed when any item moves out of the visible screen. (Contain TrackInfo)
  * @param trackAll  Lambda function to be executed when the dataLimit is reached or after onStop lifecycle method of the RecyclerView context is called. (Contains List<TrackInfo>)
@@ -71,6 +73,7 @@ class RVTimeTracker private constructor(
     private val recyclerView: RecyclerView,
     private val minTimeInMs: Long,
     private val minHeightInRatio: Double,
+    private val minWidthInRatio: Double,
     private val dataLimit: Int,
     private val trackItem: ((TrackInfo) -> Unit)?,
     private val trackAll: ((List<TrackInfo>) -> Unit)?
@@ -82,22 +85,25 @@ class RVTimeTracker private constructor(
          * @param dataLimit should be less than or equal to 50
          * @param minTimeInMs should be greater than equals to 0
          * @param minHeightInRatio should be between 0 and 1 including both
+         * @param minWidthInRatio should be between 0 and 1 including both
          */
         fun init(
             recyclerView: RecyclerView,
             minTimeInMs: Long = 0L,
             minHeightInRatio: Double = 0.5,
+            minWidthInRatio: Double = 0.5,
             dataLimit: Int = 10,
             trackItem: ((TrackInfo) -> Unit)? = null,
             trackAll: ((List<TrackInfo>) -> Unit)? = null
         ) {
-            if (dataLimit > 50 || minTimeInMs < 0 || minHeightInRatio < 0 || minHeightInRatio > 1) {
-                throw IllegalArgumentException("dataLimit/minTimeInMs/minHeightInRatio value should be within limit")
+            if (dataLimit > 50 || minTimeInMs < 0 || minHeightInRatio < 0 || minHeightInRatio > 1 || minWidthInRatio < 0 || minWidthInRatio > 1) {
+                throw IllegalArgumentException("dataLimit/minTimeInMs/minHeightInRatio/minWidthInRatio value should be within limit")
             }
             RVTimeTracker(
                 recyclerView,
                 minTimeInMs,
                 minHeightInRatio,
+                minWidthInRatio,
                 dataLimit,
                 trackItem,
                 trackAll
@@ -161,7 +167,9 @@ class RVTimeTracker private constructor(
         for (viewPosition in firstVisibleItemPosition..lastVisibleItemPosition) {
             if (viewPosition < 0) continue
             val itemView = recyclerView.layoutManager?.findViewByPosition(viewPosition)
-            if (itemView != null && getVisibleHeightPercentage(itemView) >= minHeightInRatio) {
+            if (itemView != null &&
+                getVisibleHeightPercentage(itemView) >= minHeightInRatio &&
+                getVisibleWidthPercentage(itemView) >= minWidthInRatio) {
                 if (itemView.tag?.toString() == null || itemView.tag?.toString()!!.isEmpty()) {
                     throw IllegalArgumentException("view tag is necessary")
                 }
@@ -196,6 +204,14 @@ class RVTimeTracker private constructor(
         val visibleHeight = itemRect.height().toDouble()
         val height = view.measuredHeight.toDouble()
         return visibleHeight / height
+    }
+
+    private fun getVisibleWidthPercentage(view: View): Double {
+        val itemRect = Rect()
+        view.getLocalVisibleRect(itemRect)
+        val visibleWidth = itemRect.width().toDouble()
+        val width = view.measuredWidth.toDouble()
+        return visibleWidth / width
     }
 
     private fun addItemToTrackInfoList(trackInfo: TrackInfo) {
