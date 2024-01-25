@@ -114,5 +114,5 @@ Check out the blog: https://medium.com/@khush.panchal123/introducing-rvtimetrack
 ## Contribution
 
 Enhance your app's user experience and gain insights into user interactions with RVTimeTracker.
-If you have feedback, want to report an issue, or contribute to RVTimeTracker, head over to [GitHub repository](https://github.com/khushpanchal/RecyclerViewTracking/)
+If you have feedback, want to report an issue, or contribute to RVTimeTracker, head over to [GitHub repository](https://github.com/khushpanchal/RVTimeTracker/)
 
